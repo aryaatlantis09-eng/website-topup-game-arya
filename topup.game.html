@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TopUp Game Store</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:white;
+}
+
+header{
+    background:#111;
+    padding:15px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+.section{
+    background:rgba(255,255,255,0.05);
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:10px;
+}
+
+h2{
+    margin-top:0;
+    color:#00f2ff;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:15px;
+}
+
+.card{
+    background:#1b1b1b;
+    padding:15px;
+    border-radius:10px;
+    text-align:center;
+    cursor:pointer;
+    transition:0.3s;
+    border:2px solid transparent;
+}
+
+.card:hover{
+    transform:scale(1.05);
+    border:2px solid #00f2ff;
+}
+
+.card.selected{
+    border:2px solid #00ff88;
+    background:#003b44;
+}
+
+input, select{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin-top:5px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#00f2ff;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#00c3cc;
+}
+
+.summary{
+    background:#111;
+    padding:15px;
+    border-radius:10px;
+}
+
+footer{
+    text-align:center;
+    padding:15px;
+    background:#111;
+    margin-top:20px;
+}
+
+@media(max-width:600px){
+    header{font-size:18px;}
+}
+</style>
+</head>
+
+<body>
+
+<header>🔥 TOPUP GAME STORE 🔥</header>
+
+<div class="container">
+
+<!-- PILIH GAME -->
+<div class="section">
+<h2>🎮 Pilih Game</h2>
+<div class="grid" id="gameList">
+<div class="card" onclick="selectGame(this,'Mobile Legends')">Mobile Legends</div>
+<div class="card" onclick="selectGame(this,'Free Fire')">Free Fire</div>
+<div class="card" onclick="selectGame(this,'PUBG Mobile')">PUBG Mobile</div>
+<div class="card" onclick="selectGame(this,'Valorant')">Valorant</div>
+<div class="card" onclick="selectGame(this,'Genshin Impact')">Genshin Impact</div>
+<div class="card" onclick="selectGame(this,'Call of Duty Mobile')">COD Mobile</div>
+</div>
+</div>
+
+<!-- DATA USER -->
+<div class="section">
+<h2>🆔 Masukkan Data</h2>
+<label>ID Game</label>
+<input type="text" id="userId" placeholder="Masukkan ID Game">
+
+<label>Server (Opsional)</label>
+<input type="text" id="server" placeholder="Masukkan Server">
+</div>
+
+<!-- PILIH NOMINAL -->
+<div class="section">
+<h2>💎 Pilih Nominal</h2>
+<select id="diamond" onchange="updatePrice()">
+<option value="">-- Pilih Nominal --</option>
+<option value="10000">86 Diamond - Rp10.000</option>
+<option value="20000">172 Diamond - Rp20.000</option>
+<option value="50000">429 Diamond - Rp50.000</option>
+<option value="100000">878 Diamond - Rp100.000</option>
+<option value="200000">1780 Diamond - Rp200.000</option>
+</select>
+</div>
+
+<!-- METODE PEMBAYARAN -->
+<div class="section">
+<h2>💳 Metode Pembayaran</h2>
+<select id="payment">
+<option value="">-- Pilih Metode Pembayaran --</option>
+<option>DANA</option>
+<option>OVO</option>
+<option>GoPay</option>
+<option>ShopeePay</option>
+<option>QRIS</option>
+<option>Bank BCA</option>
+<option>Bank Mandiri</option>
+<option>Bank BRI</option>
+<option>Alfamart</option>
+<option>Indomaret</option>
+</select>
+</div>
+
+<!-- RINGKASAN -->
+<div class="section">
+<h2>🧾 Ringkasan Pesanan</h2>
+<div class="summary" id="summary">
+Belum ada pesanan
+</div>
+
+<button onclick="checkout()">🚀 Proses Pembayaran</button>
+</div>
+
+</div>
+
+<footer>
+© 2025 TopUp Game Store | Aman & Terpercaya
+</footer>
+
+<script>
+let selectedGame = "";
+let selectedPrice = 0;
+
+function selectGame(element, game){
+    document.querySelectorAll('.card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    element.classList.add('selected');
+    selectedGame = game;
+    updateSummary();
+}
+
+function updatePrice(){
+    selectedPrice = document.getElementById("diamond").value;
+    updateSummary();
+}
+
+function updateSummary(){
+    let userId = document.getElementById("userId").value;
+    let server = document.getElementById("server").value;
+    let payment = document.getElementById("payment").value;
+
+    if(!selectedGame){
+        document.getElementById("summary").innerHTML = "Belum ada pesanan";
+        return;
+    }
+
+    document.getElementById("summary").innerHTML = `
+    Game: ${selectedGame} <br>
+    ID: ${userId || '-'} <br>
+    Server: ${server || '-'} <br>
+    Harga: Rp ${selectedPrice || 0} <br>
+    Pembayaran: ${payment || '-'}
+    `;
+}
+
+document.querySelectorAll("input, select").forEach(el=>{
+    el.addEventListener("change",updateSummary);
+    el.addEventListener("keyup",updateSummary);
+});
+
+function checkout(){
+    if(!selectedGame || !selectedPrice){
+        alert("Lengkapi data terlebih dahulu!");
+        return;
+    }
+    alert("Pesanan berhasil dibuat!\nSilakan lanjut ke pembayaran.");
+}
+</script>
+
+</body>
+</html>
